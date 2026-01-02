@@ -1,2 +1,3 @@
 # Onward-Game-Provolver-additions
 Adding support to Onward VR for revolver/pistol haptics, which are are missing for the Provolver.   Haptics were only supported when using rifles in game  Hence this mod for adding hand guns.
+When I purchased my ProVolver, I had already had a ForceTube for a couple of years.  The rifles would of course work with my original ForceTube, but pistols had no haptics.  This I thought was sensible for a single ForceTube.   But I was very disappopinted when my new Provolver had exactly the same level of support.  In the leadup to Christmas, I found it was not as difficult to get working as I had always assumed.
