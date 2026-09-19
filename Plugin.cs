@@ -10,9 +10,11 @@ using System.Text.RegularExpressions;
 
 namespace OnwardForceTubePistolPlugin
 {
-    [BepInPlugin("com.forcetube.onward.pistol", "Onward ForceTube Pistol Support", "2.0.0")]
+    [BepInPlugin("com.forcetube.onward.pistol", "Onward ForceTube Pistol Support", "2.1.0")]
     public class Plugin : BasePlugin
     {
+        internal const string PluginVersion = "2.1.0";
+
         internal static new ManualLogSource Log;
         internal static DeviceConfig DeviceConfiguration;
         private static bool channelsConfigured = false;
@@ -25,6 +27,18 @@ namespace OnwardForceTubePistolPlugin
             // Initialize configuration
             DeviceConfiguration = new DeviceConfig(Config);
             Log.LogInfo($"Configuration loaded from: {Config.ConfigFilePath}");
+
+            // Stamp the config with the current plugin version. The corrected pistol
+            // hand->channel mapping notice lives in the config file's channel comments
+            // (BepInEx regenerates those on save), which is the only place a user
+            // actually reads. We never rewrite the user's channel VALUES.
+            string previousVersion = DeviceConfiguration.ConfigVersion.Value;
+            if (previousVersion != PluginVersion)
+            {
+                Log.LogInfo($"Config version: '{previousVersion}' -> '{PluginVersion}' " +
+                            "(pistol hand mapping is now 4=RIGHT, 5=LEFT - see config file comments)");
+                DeviceConfiguration.ConfigVersion.Value = PluginVersion;
+            }
 
             // Register our custom PistolForceTubeHandler with Il2Cpp
             try

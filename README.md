@@ -1,10 +1,10 @@
-# Onward ForceTube Pistol Plugin v2.0.0 - by FrostByte
+# Onward ForceTube Pistol Plugin v2.1.0 - by FrostByte
 
 This mod just adds ForceTube haptic feedback support for pistols in Onward VR.  This has flexible per-device channel configuration.
 
-When I purchased my ProVolver, I had already had a ForceTube for a couple of years.  The rifles would of course work with my original ForceTube, but pistols had no haptics.  This I thought was sensible for a single ForceTube.   But I was very disappointed when my new Provolver had exactly the same level of support.  In the leadup to Christmas, I found it was not as difficult to get working as I had always assumed.
+When I purchased my ProVolver, I had already had a ForceTube for a couple of years.  The rifles would of course work with my original ForceTube, but pistols had no haptics.  This I thought was sensible for a single ForceTube.   But I was very disappopinted when my new Provolver had exactly the same level of support.  In the leadup to Christmas, I found it was not as difficult to get working as I had always assumed.
 
-This is probably unnecessary, but I will suggest you keep a second Onward install if you play multi-player.   I play standalone most of the time these days. There is a non-zero risk you will get a ban during multi-player play if you play with ANY mod installed.  I dont know how the games anti-cheat software works...it might simply be a checksum on the games binaries and DLLs.  If its as simple as that, then ANY addition to the games code (which is what this mod is) would get flagged as cheating.   Even though it only adds haptics.  Though I might be overthinking this - the risk is on you!
+This is probbaly unnecessary, but I will suggest you keep a second Onward install if you play multi-player.   I play standalone most of the time these days. There is a non-zero risk you will get a ban during multi-player play if you play with ANY mod installed.  I dont know how the games anti-cheat software works...it might simply be a checksum on the games binaries and DLLs.  If its as simple as that, then ANY addition to the games code (which is what this mod is) would get flagged as cheating.   Even though it only adds haptics.  Though I might be overthinking this - the risk is on you!
 
 ## Features
 
@@ -111,13 +111,32 @@ Channels = 2,3
 
 [Device_2]
 Channels = 4
-FriendlyName = Left Pistol
+FriendlyName = Right Pistol
 
 [Device_3]
 Channels = 5
-FriendlyName = Right Pistol
+FriendlyName = Left Pistol
 ```
-**Result:** Rifles trigger Device_1, left-hand pistols trigger Device_2, right-hand pistols trigger Device_3
+**Result:** Rifles trigger Device_1, right-hand pistols trigger Device_2, left-hand pistols trigger Device_3
+
+#### Left/Right Pistols and Rifle (pistols separate - rifles kick for all!):
+```ini
+[Device_1]
+DeviceID = ForceTubeVR 1356051586
+Channels = 2,3
+FriendlyName = My Rifle Device
+
+[Device_2]
+DeviceID = ForceTubeVR 1319491275
+Channels = 4,2,3
+FriendlyName = Left ProVolver
+
+[Device_3]
+DeviceID = ForceTubeVR 1319493444
+Channels = 5,2,3
+FriendlyName = Right ProVolver
+```
+**Result:** Rifles trigger Device_1 only, pistols trigger Device_2 only
 
 ### Channel Reference
 
@@ -125,14 +144,22 @@ FriendlyName = Right Pistol
 |---------|------|---------------|
 | 2 | RifleButt | In-game rifles/shotguns/LMGs fire |
 | 3 | RifleBolt | In-game rifles/shotguns/LMGs fire |
-| 4 | Pistol1 | In-game pistols fire (left hand) |
-| 5 | Pistol2 | In-game pistols fire (right hand) |
+| 4 | Pistol1 | In-game pistols fire (**right** hand) |
+| 5 | Pistol2 | In-game pistols fire (**left** hand) |
+
+> **Hand mapping changed in v2.1.0.** Pistol haptics now route by the hand actually
+> holding the gun, so dual-wielded pistols drive separate devices. Channel **4 = RIGHT**
+> hand, **5 = LEFT** hand — this matches the Crisis VRigade 2 ForceTube mod so one device
+> config works across both games. Before v2.1.0 *every* pistol shot went to channel 4
+> regardless of hand. If you previously assigned a device to channel 4 or 5 **alone**,
+> re-check which hand it now represents; devices on `4,5` fire for both hands and are
+> unaffected.
 
 **Examples:**
 - `Channels = 2,3` - Device triggers only for rifles
-- `Channels = 4,5` - Device triggers only for pistols
+- `Channels = 4,5` - Device triggers only for pistols (both hands)
 - `Channels = 2,3,4,5` - Device triggers for all weapons
-- `Channels = 4` - Device triggers only for left-hand pistols
+- `Channels = 4` - Device triggers only for right-hand pistols
 
 ### Test Mode
 
@@ -190,6 +217,18 @@ The ForceTube API uses numbered channels (2-7). This plugin:
 
 ## Version History
 
+### v2.1.0 (2026-07-17)
+- **True left/right pistol routing** - pistol haptics now go to the hand actually
+  holding the gun, so dual-wielded pistols drive separate ForceTube/ProVolver devices.
+  The hand is read directly from the game (`Pickup.HandHeldIn.HandType`), not guessed.
+- **Corrected channel/hand convention**: channel 4 = RIGHT hand, 5 = LEFT hand
+  (reversed from the pre-2.1.0 docs; now consistent with the Crisis VRigade 2 ForceTube
+  mod so a single device config works across both games).
+- **Note for upgraders**: before v2.1.0 every pistol shot went to channel 4 regardless
+  of hand. A device configured to channel `4` alone now fires for the right hand only
+  (previously both). Devices on `4,5` are unaffected. The config file carries this
+  notice, and a `[General] ConfigVersion` entry now records the plugin version.
+
 ### v2.0.0 (2025-12-13)
 - Added BepInEx configuration system
 - Flexible per-device channel assignment
@@ -211,7 +250,7 @@ The ForceTube API uses numbered channels (2-7). This plugin:
 
 ## License
 
-This is a personal mod for Onward VR. Free to use, but at your own risk.  You should not modify nor distribute the mod without written permission from the author.  Consult the author FrostByte on Github https://github.com/FrostByte1001/Onward-Game-Provolver-additions.
+This is a personal mod for Onward VR. Use at your own risk.  You should not modify nor distribute the mod without written permission from the author.  Consult the author FrostByte on Github https://github.com/FrostByte1001/Onward-Game-Provolver-additions.
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -221,4 +260,3 @@ For issues or questions, check:
 1. `BepInEx\LogOutput.log` for detailed logging
 2. Ensure `VerboseLogging = true` in config for maximum detail
 3. Verify ForceTubeVR_API_x64.dll has been updated
-

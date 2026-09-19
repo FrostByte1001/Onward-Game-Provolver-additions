@@ -63,9 +63,20 @@ namespace OnwardForceTubePistolPlugin
         {
             try
             {
-                // Send haptic feedback to PISTOL channel
-                // ForceTubeVRChannel.pistol1 = 4
+                // Route to the correct pistol channel based on which hand holds this gun,
+                // so dual-wielded pistols can drive separate physical devices.
+                // Convention (matches the Crisis VRigade 2 ForceTube mod):
+                //   ForceTubeVRChannel.pistol1 = 4  -> RIGHT hand
+                //   ForceTubeVRChannel.pistol2 = 5  -> LEFT hand
+                // Default to 4 (right) if the hand can't be resolved, so behaviour never
+                // regresses below "something fires".
                 byte pistolChannel = 4;
+
+                var handController = pistolGun.HandHeldIn; // inherited from base Pickup
+                if (handController != null && handController.HandType == InputGlobal.Hand.Left)
+                {
+                    pistolChannel = 5; // pistol2 = left hand
+                }
 
                 // Strong kick power (similar to rifles)
                 byte kickPower = 200;
@@ -79,7 +90,17 @@ namespace OnwardForceTubePistolPlugin
                 // Call the ForceTube Shot method with PISTOL channel
                 ForceTubeVRInterface.Shoot(kickPower, rumblePower, rumbleDuration, (ForceTubeVRChannel)pistolChannel);
 
-                Plugin.Log.LogInfo($"PistolForceTubeHandler: Sent haptic feedback on PISTOL channel");
+                if (Plugin.DeviceConfiguration != null && Plugin.DeviceConfiguration.VerboseLogging.Value)
+                {
+                    string handName = handController == null
+                        ? "unknown (defaulted RIGHT)"
+                        : handController.HandType.ToString();
+                    Plugin.Log.LogInfo($"PistolForceTubeHandler: Pistol fired by {handName} hand -> channel {pistolChannel}");
+                }
+                else
+                {
+                    Plugin.Log.LogInfo($"PistolForceTubeHandler: Sent haptic feedback on PISTOL channel {pistolChannel}");
+                }
             }
             catch (Exception ex)
             {

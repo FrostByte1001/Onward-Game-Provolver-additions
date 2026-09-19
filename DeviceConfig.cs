@@ -10,6 +10,7 @@ namespace OnwardForceTubePistolPlugin
     public class DeviceConfig
     {
         // General settings
+        public ConfigEntry<string> ConfigVersion;
         public ConfigEntry<bool> EnableAutoConfig;
         public ConfigEntry<bool> VerboseLogging;
         public ConfigEntry<bool> TestModeOnStartup;
@@ -33,6 +34,16 @@ namespace OnwardForceTubePistolPlugin
         public DeviceConfig(ConfigFile config)
         {
             // General settings
+            ConfigVersion = config.Bind(
+                "General",
+                "ConfigVersion",
+                "",
+                "Records the plugin version that last wrote this config. Do not edit.\n" +
+                "As of v2.1.0 pistol haptics route by hand: channel 4 = RIGHT, 5 = LEFT\n" +
+                "(reversed from earlier docs). If this was blank/older than 2.1.0 when you\n" +
+                "upgraded, re-check any device assigned to channel 4 or 5 alone."
+            );
+
             EnableAutoConfig = config.Bind(
                 "General",
                 "EnableAutoConfig",
@@ -81,14 +92,21 @@ namespace OnwardForceTubePistolPlugin
                     "Channel meanings:\n" +
                     "  2 = RifleButt   (rifle stock position)\n" +
                     "  3 = RifleBolt   (rifle bolt position)\n" +
-                    "  4 = Pistol1     (left-hand pistol)\n" +
-                    "  5 = Pistol2     (right-hand pistol)\n" +
+                    "  4 = Pistol1     (RIGHT-hand pistol)\n" +
+                    "  5 = Pistol2     (LEFT-hand pistol)\n" +
+                    "\n" +
+                    "*** NOTE (v2.1.0): pistol hand mapping is now live and was corrected.\n" +
+                    "    4 = RIGHT hand, 5 = LEFT hand (this is REVERSED from pre-2.1.0 docs,\n" +
+                    "    and matches the Crisis VRigade 2 ForceTube mod). Before v2.1.0 EVERY\n" +
+                    "    pistol shot went to channel 4 regardless of hand. If you set a device\n" +
+                    "    to '4' or '5' alone, re-check which hand it now represents. Devices on\n" +
+                    "    '4,5' fire for both hands and are unaffected. ***\n" +
                     "\n" +
                     "Common configurations:\n" +
                     "  2,3     = Rifle device (both rifle channels)\n" +
                     "  4,5     = Pistol device for both hands\n" +
-                    "  4       = Left-hand pistol only\n" +
-                    "  5       = Right-hand pistol only\n" +
+                    "  4       = Right-hand pistol only\n" +
+                    "  5       = Left-hand pistol only\n" +
                     "  2,3,4,5 = All weapons trigger this device\n" +
                     "  (empty) = Disabled"
                 )
